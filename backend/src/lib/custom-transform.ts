@@ -1,17 +1,17 @@
-import { jsonSchemaTransform } from "fastify-type-provider-zod";
+import { jsonSchemaTransform } from 'fastify-type-provider-zod'
 
 export function customTransform(schema: any, ...rest: any[]) {
-  const result = jsonSchemaTransform(schema, ...rest);
+  const result = jsonSchemaTransform(schema, ...rest)
 
   function removePattern(obj: any) {
-    if (!obj || typeof obj !== "object") return;
+    if (!obj || typeof obj !== 'object') return
 
-    delete obj.pattern;
+    delete obj.pattern
 
-    Object.values(obj).forEach(removePattern);
+    Object.values(obj).forEach(removePattern)
   }
 
-  removePattern(result);
+  removePattern(result)
 
-  return result;
+  return result
 }

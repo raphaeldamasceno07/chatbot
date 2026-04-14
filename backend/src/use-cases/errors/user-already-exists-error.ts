@@ -1,7 +1,7 @@
-import { AppError } from "./app-error.js";
+import { AppError } from './app-error.js'
 
 export class UserAlreadyExistsError extends AppError {
   constructor() {
-    super("User already exists.", 409);
+    super('User already exists.', 409)
   }
 }

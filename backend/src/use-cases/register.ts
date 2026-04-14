@@ -1,17 +1,17 @@
-import type { User } from "@/models/user-model.js";
-import type { UsersRepository } from "@/repositories/users-repository.js";
-import { hash } from "bcryptjs";
-import { UserAlreadyExistsError } from "./errors/user-already-exists-error.js";
+import { hash } from 'bcryptjs'
+import type { User } from '@/models/user-model.js'
+import type { UsersRepository } from '@/repositories/users-repository.js'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error.js'
 
 interface RegisterUserCaseRequest {
-  name: string;
-  email: string;
-  password: string;
-  avatar?: string | undefined;
+  name: string
+  email: string
+  password: string
+  avatar?: string | undefined
 }
 
 interface RegisterUserCaseResponse {
-  user: User;
+  user: User
 }
 export class RegisterUserCase {
   constructor(private userRepository: UsersRepository) {}
@@ -22,11 +22,11 @@ export class RegisterUserCase {
     password,
     avatar,
   }: RegisterUserCaseRequest): Promise<RegisterUserCaseResponse> {
-    const passwordHash = await hash(password, 6);
+    const passwordHash = await hash(password, 6)
 
-    const emailExists = await this.userRepository.findByEmail(email);
+    const emailExists = await this.userRepository.findByEmail(email)
     if (emailExists) {
-      throw new UserAlreadyExistsError();
+      throw new UserAlreadyExistsError()
     }
 
     const user = await this.userRepository.create({
@@ -34,8 +34,8 @@ export class RegisterUserCase {
       email,
       password: passwordHash,
       avatar: avatar ?? undefined,
-    });
+    })
 
-    return { user };
+    return { user }
   }
 }
