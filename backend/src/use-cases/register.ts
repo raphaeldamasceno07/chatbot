@@ -1,0 +1,41 @@
+import type { User } from "@/models/user-model.js";
+import type { UsersRepository } from "@/repositories/users-repository.js";
+import { hash } from "bcryptjs";
+import { UserAlreadyExistsError } from "./errors/user-already-exists-error.js";
+
+interface RegisterUserCaseRequest {
+  name: string;
+  email: string;
+  password: string;
+  avatar?: string | undefined;
+}
+
+interface RegisterUserCaseResponse {
+  user: User;
+}
+export class RegisterUserCase {
+  constructor(private userRepository: UsersRepository) {}
+
+  async execute({
+    name,
+    email,
+    password,
+    avatar,
+  }: RegisterUserCaseRequest): Promise<RegisterUserCaseResponse> {
+    const passwordHash = await hash(password, 6);
+
+    const emailExists = await this.userRepository.findByEmail(email);
+    if (emailExists) {
+      throw new UserAlreadyExistsError();
+    }
+
+    const user = await this.userRepository.create({
+      name,
+      email,
+      password: passwordHash,
+      avatar: avatar ?? undefined,
+    });
+
+    return { user };
+  }
+}
