@@ -1,0 +1,6 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  // Desativa especificamente o prettier se ele insistir em aparecer
+  "prettier.enable": false
+}
