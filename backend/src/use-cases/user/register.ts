@@ -1,13 +1,14 @@
-import { hash } from 'bcryptjs'
 import type { User } from '@/models/user-model.js'
 import type { UsersRepository } from '@/repositories/users-repository.js'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error.js'
+import { hash } from 'bcryptjs'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error.js'
 
 interface RegisterUserCaseRequest {
   name: string
   email: string
   password: string
   avatar?: string | undefined
+  role?: 'admin' | 'employee'
 }
 
 interface RegisterUserCaseResponse {
@@ -21,10 +22,12 @@ export class RegisterUserCase {
     email,
     password,
     avatar,
+    role = 'employee',
   }: RegisterUserCaseRequest): Promise<RegisterUserCaseResponse> {
     const passwordHash = await hash(password, 6)
 
     const emailExists = await this.userRepository.findByEmail(email)
+
     if (emailExists) {
       throw new UserAlreadyExistsError()
     }
@@ -34,6 +37,7 @@ export class RegisterUserCase {
       email,
       password: passwordHash,
       avatar: avatar ?? undefined,
+      role,
     })
 
     return { user }

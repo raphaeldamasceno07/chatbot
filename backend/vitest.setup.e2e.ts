@@ -22,6 +22,7 @@ export async function setup() {
   // 1. Injeta no process.env PRIMEIRO
   process.env.MONGO_URL = uri
   process.env.NODE_ENV = 'test'
+  process.env.JWT_SECRET_TEST = 'test-jwt-secret-key-for-testing-purposes'
 
   // 2. Só agora importa o seu validador de env (Zod ou similar)
   // Isso garante que quando o 'env' for carregado, ele já leia o MONGO_URL correto

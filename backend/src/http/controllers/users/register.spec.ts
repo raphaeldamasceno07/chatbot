@@ -14,7 +14,7 @@ describe('Register (e2e)', () => {
     await disconnectDatabase()
   }, 30000)
 
-  afterEach(async () => {
+  beforeEach(async () => {
     await mongoose.connection.db?.collection('users').deleteMany({})
   })
 
@@ -42,5 +42,25 @@ describe('Register (e2e)', () => {
     })
 
     expect(response.status).toBe(409)
+  })
+
+  it('shold not be able to register with invalid email', async () => {
+    const response = await request(app.server).post('/users').send({
+      name: 'John Doe',
+      email: 'invalid-email',
+      password: 'password123',
+    })
+
+    expect(response.status).toBe(400)
+  })
+
+  it('shold not be able to register with short password', async () => {
+    const response = await request(app.server).post('/users').send({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      password: '123',
+    })
+
+    expect(response.status).toBe(400)
   })
 })

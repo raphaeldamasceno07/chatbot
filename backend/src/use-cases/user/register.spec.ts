@@ -1,7 +1,7 @@
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.js'
 import { compare } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error.js'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error.js'
 import { RegisterUserCase } from './register.js'
 
 let usersRepository: InMemoryUsersRepository
@@ -25,7 +25,7 @@ describe('Register use case', () => {
       expect.objectContaining({
         id: expect.any(String),
         email: 'jhondoe1@example.com',
-      })
+      }),
     )
   })
 
@@ -39,6 +39,30 @@ describe('Register use case', () => {
     expect(user.password).not.toBe('123456')
     const isPasswordCorrectlyHashed = await compare('123456', user.password)
     expect(isPasswordCorrectlyHashed).toBe(true)
+  })
+
+  it('should be able to register with admin role', async () => {
+    const { user } = await sut.execute({
+      name: 'John Doe',
+      email: 'jhondoe1@example.com',
+      password: '123456',
+      role: 'admin',
+    })
+
+    expect(user.role).toBe('admin')
+  })
+
+  it('should be able to register with avatar', async () => {
+    const { user } = await sut.execute({
+      name: 'John Doe',
+      email: 'jhondoe1@example.com',
+      password: '123456',
+      role: 'admin',
+      avatar: 'https://example.com/avatar.jpg',
+    })
+
+    expect(user.role).toBe('admin')
+    expect(user.avatar).toBe('https://example.com/avatar.jpg')
   })
 
   it('should not be able to register with same email twice', async () => {
