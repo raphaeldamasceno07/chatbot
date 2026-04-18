@@ -39,7 +39,7 @@ app.register(fastifySwagger, {
 app.register(scalarApiReference, {
   routePrefix: '/docs',
   configuration: {
-    theme: 'deepSpace',
+    theme: 'kepler',
     layout: 'modern',
     showSidebar: true,
   },

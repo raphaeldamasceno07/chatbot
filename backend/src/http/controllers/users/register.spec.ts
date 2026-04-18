@@ -19,7 +19,7 @@ describe('Register (e2e)', () => {
   })
 
   it('should be able to register', async () => {
-    const response = await request(app.server).post('/users').send({
+    const response = await request(app.server).post('/register').send({
       name: 'John Doe',
       email: 'john.doe@example.com',
       password: 'password123',
@@ -29,13 +29,13 @@ describe('Register (e2e)', () => {
   })
 
   it('shoud not be able to register with existing email', async () => {
-    await request(app.server).post('/users').send({
+    await request(app.server).post('/register').send({
       name: 'John Doe',
       email: 'john.doe@example.com',
       password: 'password123',
     })
 
-    const response = await request(app.server).post('/users').send({
+    const response = await request(app.server).post('/register').send({
       name: 'Jane Doe',
       email: 'john.doe@example.com', // Email already exists
       password: 'password123',
@@ -45,7 +45,7 @@ describe('Register (e2e)', () => {
   })
 
   it('shold not be able to register with invalid email', async () => {
-    const response = await request(app.server).post('/users').send({
+    const response = await request(app.server).post('/register').send({
       name: 'John Doe',
       email: 'invalid-email',
       password: 'password123',
@@ -55,7 +55,7 @@ describe('Register (e2e)', () => {
   })
 
   it('shold not be able to register with short password', async () => {
-    const response = await request(app.server).post('/users').send({
+    const response = await request(app.server).post('/register').send({
       name: 'John Doe',
       email: 'john.doe@example.com',
       password: '123',

@@ -7,11 +7,11 @@ import z from 'zod'
 
 export async function userRoutes(app: FastifyInstance) {
   app.post(
-    '/users',
+    '/register',
     {
       schema: {
         tags: ['Users'],
-        summary: 'Create user',
+        summary: '/register',
         description: 'Create a new user account',
         body: registerUserBodySchema,
         response: {
@@ -27,6 +27,6 @@ export async function userRoutes(app: FastifyInstance) {
         },
       },
     },
-    register
+    register,
   )
 }

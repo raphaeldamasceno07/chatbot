@@ -15,11 +15,11 @@ describe('Authenticate (e2e)', () => {
   }, 30000)
 
   afterEach(async () => {
-    await mongoose.connection.db?.collection('users').deleteMany({})
+    await mongoose.connection.db?.collection('register').deleteMany({})
   })
 
   it('should be able to authenticate', async () => {
-    await request(app.server).post('/users').send({
+    await request(app.server).post('/register').send({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: '123456',
@@ -36,7 +36,7 @@ describe('Authenticate (e2e)', () => {
   })
 
   it('should not be able to authenticate with wrong password', async () => {
-    await request(app.server).post('/users').send({
+    await request(app.server).post('/register').send({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: '123456',

@@ -2,6 +2,7 @@ import {
   authenticateBodySchema,
   session,
 } from '@/http/controllers/sessions/authenticate.js'
+import { refresh } from '@/http/controllers/sessions/refresh.js'
 import type { FastifyInstance } from 'fastify'
 import z from 'zod'
 
@@ -30,5 +31,24 @@ export async function sessionRoutes(app: FastifyInstance) {
     session,
   )
 
-  // app.patch('/token/refresh', refresh)
+  app.patch(
+    '/token/refresh',
+    {
+      schema: {
+        tags: ['Authentication'],
+        summary: 'Refresh authentication token',
+        description:
+          'Refresh the authentication token using a valid refresh token',
+        response: {
+          200: z.object({
+            token: z.string().describe('New authentication token'),
+          }),
+          401: z.object({
+            message: z.string().describe('Invalid or expired refresh token'),
+          }),
+        },
+      },
+    },
+    refresh,
+  )
 }
