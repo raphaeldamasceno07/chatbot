@@ -1,6 +1,6 @@
 import type { IUser } from '@/models/user-model.js'
 import type { UsersRepository } from '@/repositories/users-repository.js'
-import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts.js'
+import { ResourceNotFoundError } from './errors/resource-not-found-error.ts.js'
 
 interface GetUserProfileUseCaseRequest {
   userId: string

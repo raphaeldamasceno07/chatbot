@@ -1,10 +1,14 @@
-import 'dotenv/config'
+if (process.env.NODE_ENV !== 'test') {
+  await import('dotenv/config')
+}
+
 import { z } from 'zod'
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['dev', 'test', 'prod']),
   PORT: z.coerce.number().default(3333),
   MONGO_URL: z.string(),
+  JWT_SECRET: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)

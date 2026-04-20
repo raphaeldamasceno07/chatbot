@@ -23,7 +23,6 @@ export class InMemoryUsersRepository implements UsersRepository {
       last_seen: new Date(),
       created_at: new Date(),
       updated_at: new Date(),
-      // Caso seu model tenha avatar opcional, garantimos que ele exista aqui
       avatar: data.avatar ?? null,
     }
 

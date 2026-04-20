@@ -1,32 +1,37 @@
+import { makeRegisterUseCase } from '@/use-cases/factories/make-register-use-case.js'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import z from 'zod'
-import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error.js'
-import { makeRegisterUseCase } from '@/use-cases/factories/make-register-use-case.js'
 
 export const registerUserBodySchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
-  email: z.string().email({ message: 'Formato de e-mail inválido' }),
+  email: z.email({ message: 'Formato de e-mail inválido' }),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  role: z.enum(['admin', 'employee']).optional().default('employee'),
+  avatar: z.preprocess(
+    (value) => {
+      if (typeof value === 'string' && value.trim() === '') {
+        return undefined
+      }
+      return value
+    },
+    z.string().url({ message: 'URL de avatar inválida' }).optional(),
+  ),
 })
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
-  const { name, email, password } = registerUserBodySchema.parse(request.body)
+  const { name, email, password, role, avatar } = registerUserBodySchema.parse(
+    request.body,
+  )
 
-  try {
-    const registerUseCase = makeRegisterUseCase()
+  const registerUseCase = makeRegisterUseCase()
 
-    await registerUseCase.execute({
-      name,
-      email,
-      password,
-    })
+  await registerUseCase.execute({
+    name,
+    email,
+    password,
+    role,
+    avatar,
+  })
 
-    return reply.status(201).send({ message: 'User successfully created' })
-  } catch (error) {
-    if (error instanceof UserAlreadyExistsError) {
-      return reply.status(409).send({ message: error.message })
-    }
-
-    throw error
-  }
+  return reply.status(201).send({ message: 'User successfully created' })
 }
