@@ -1,17 +1,22 @@
-import type { User } from '@/models/user-model.js'
+import type { IUser } from '@/models/user-model.js'
 import { randomUUID } from 'node:crypto'
 import type { UserCreateInput, UsersRepository } from '../users-repository.js'
 
 export class InMemoryUsersRepository implements UsersRepository {
-  public items: User[] = []
+  public items: IUser[] = []
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<IUser | null> {
     const user = this.items.find((item) => item.email === email)
     return user || null
   }
 
-  async create(data: UserCreateInput): Promise<User> {
-    const user: User = {
+  async findById(id: string): Promise<IUser | null> {
+    const user = this.items.find((item) => item.id === id)
+    return user || null
+  }
+
+  async create(data: UserCreateInput): Promise<IUser> {
+    const user: IUser = {
       ...data,
       id: randomUUID(),
       is_online: false,
