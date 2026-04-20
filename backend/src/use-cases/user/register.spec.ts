@@ -1,3 +1,4 @@
+import type { IUser } from '@/models/user-model.js'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.js'
 import { compare } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -36,8 +37,14 @@ describe('Register use case', () => {
       password: '123456',
     })
 
-    expect(user.password).not.toBe('123456')
-    const isPasswordCorrectlyHashed = await compare('123456', user.password)
+    const userWithPassword = user as IUser
+
+    expect(userWithPassword.password).not.toBe('123456')
+
+    const isPasswordCorrectlyHashed = await compare(
+      '123456',
+      userWithPassword.password!,
+    )
     expect(isPasswordCorrectlyHashed).toBe(true)
   })
 

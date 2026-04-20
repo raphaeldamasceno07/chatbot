@@ -31,13 +31,12 @@ export class RegisterUserCase {
 
     if (emailExists) throw new UserAlreadyExistsError()
 
-    // Agora o objeto literal abaixo bate EXATAMENTE com o UserCreateInput literal
     const user = await this.userRepository.create({
       name,
       email,
       password: passwordHash,
-      avatar: avatar ?? undefined,
-      role: role ?? 'employee',
+      avatar,
+      role,
     })
 
     return { user }

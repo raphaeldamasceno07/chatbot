@@ -1,5 +1,5 @@
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.js'
-import { ResourceNotFoundError } from '../errors/resource-not-found-error.ts.js'
+import { ResourceNotFoundError } from './errors/resource-not-found-error.ts.js'
 import { GetUserProfileUseCase } from './get-user-profile.js'
 
 let userRepository: InMemoryUsersRepository
