@@ -28,7 +28,8 @@ services:
       - ./backend/.env
     volumes:
       - ./backend:/app
-      - backend_node_modules:/app/node_modules
+      - /app/node_modules
+      - ./backend/auth_info_baileys:/app/auth_info_baileys
       - uploads:/app/uploads
       - /var/run/docker.sock:/var/run/docker.sock
     environment:

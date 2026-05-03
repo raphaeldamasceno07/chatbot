@@ -1,12 +1,14 @@
 import { app } from './app.js'
 import { env } from './env/index.js'
 import { connectDatabase } from './lib/mongoose.js'
+import { BaileysProvider } from './providers/WhatsAppProvider/BaileysProvider.js'
 
 const DOC_LINK = `http://localhost:${env.PORT}/docs`
 
 async function bootstrap() {
   try {
     await connectDatabase()
+    await BaileysProvider.getSocket()
 
     await app.listen({
       host: '0.0.0.0',
