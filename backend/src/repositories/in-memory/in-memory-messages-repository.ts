@@ -1,13 +1,13 @@
 import type { IMessage } from '@/models/message-model.js'
 import { randomUUID } from 'node:crypto'
-import type { IMessageRepository } from '../messages-repository.js'
+import type { MessageRepository } from '../messages-repository.js'
 
-export class InMemoryMessagesRepository implements IMessageRepository {
+export class InMemoryMessagesRepository implements MessageRepository {
   public items: IMessage[] = []
 
   async create(data: Partial<IMessage>): Promise<IMessage> {
     const message = {
-      _id: randomUUID(), // Simula o ID do MongoDB
+      _id: randomUUID(),
       remoteJid: data.remoteJid!,
       pushName: data.pushName || 'Desconhecido',
       content: data.content || '',
