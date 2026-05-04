@@ -1,56 +1,58 @@
 import type { IMessage } from '@/models/message-model.js'
-import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.js'
-import { ProcessIncomingMessageUseCase } from '@/use-cases/messages/process-incoming-message.js'
+import { makeReceivingWaUseCase } from '@/use-cases/factories/make-receiving-wa-messages-use-case.js'
 import { type WASocket } from '@whiskeysockets/baileys'
 
 export class WhatsAppEvents {
+  messageUseCase = makeReceivingWaUseCase()
+
   static setup(sock: WASocket) {
     sock.ev.on('messages.upsert', async ({ messages, type }) => {
       if (type === 'notify') {
         for (const msg of messages) {
           const m = msg.message
-          console.log(msg)
           if (!m) continue
 
-          let type: IMessage['type'] = 'text'
+          // 1. Extração de dados (Parser)
+          let currentType: IMessage['type'] = 'text'
           let content = m.conversation || m.extendedTextMessage?.text
-          let mediaUrl = undefined
-          let mimetype = undefined
-          let seconds = undefined
+          let mediaUrl, mimetype, seconds
 
-          // Lógica para detectar Mídia
           if (m.imageMessage) {
-            type = 'image'
-            content = m.imageMessage.caption // Legenda da foto
+            currentType = 'image'
+            content = m.imageMessage.caption
             mediaUrl = m.imageMessage.url
             mimetype = m.imageMessage.mimetype
           } else if (m.videoMessage) {
-            type = 'video'
+            currentType = 'video'
             content = m.videoMessage.caption
             mediaUrl = m.videoMessage.url
             mimetype = m.videoMessage.mimetype
             seconds = m.videoMessage.seconds
           } else if (m.audioMessage) {
-            type = 'audio'
+            currentType = 'audio'
             mediaUrl = m.audioMessage.url
             mimetype = m.audioMessage.mimetype
             seconds = m.audioMessage.seconds
           }
 
-          await ProcessIncomingMessageUseCase.execute({
+          // 2. Execução do Use Case (Regra de Negócio)
+          await messageUseCase.execute({
             messageData: {
               remoteJid: msg.key.remoteJid!,
               pushName: msg.pushName || 'Desconhecido',
               content: content || '',
               fromMe: !!msg.key.fromMe,
-              type: messageType,
+              type: currentType, // Ajustado para usar a variável correta
               messageId: msg.key.id!,
-              // metadados de mídia...
+              mediaUrl,
+              mimetype,
+              seconds,
+              timestamp: new Date(),
             },
           })
 
           console.log(
-            `✅ [Memória] Mensagens totais: ${InMemoryUsersRepository.items.length}`,
+            `✅ [Memória] Mensagem de ${msg.pushName} salva. Total: ${messagesRepository.items.length}`,
           )
         }
       }
