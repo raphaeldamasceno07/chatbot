@@ -1,33 +1,36 @@
-import { model, Schema, Types } from 'mongoose'
+import { Schema, model, type Document } from 'mongoose'
 
 export interface IMessage extends Document {
-  conversationId: Types.ObjectId
-  senderId: Types.ObjectId
-  content: string
-  type: 'text' | 'image' | 'file' | 'audio' | 'video' // Adicionei video
+  remoteJid: string
+  pushName: string
+  content?: string
+  fromMe: boolean
+  type: 'text' | 'image' | 'video' | 'audio' | 'other'
   mediaUrl?: string
-  fileName?: string // Nome original: "aula_calculo.pdf"
-  fileSize?: number // Tamanho em bytes
-  createdAt: Date
+  mimetype?: string
+  seconds?: number
+  messageId: string
+  timestamp: Date
 }
 
-const messageSchema = new Schema<IMessage>({
-  conversationId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Conversation',
-    required: true,
+const MessageSchema = new Schema<IMessage>(
+  {
+    remoteJid: { type: String, required: true, index: true },
+    pushName: { type: String, default: 'Desconhecido' },
+    content: { type: String },
+    fromMe: { type: Boolean, required: true },
+    type: {
+      type: String,
+      enum: ['text', 'image', 'video', 'audio', 'other'],
+      default: 'text',
+    },
+    mediaUrl: { type: String },
+    mimetype: { type: String },
+    seconds: { type: Number },
+    messageId: { type: String, required: true, unique: true },
+    timestamp: { type: Date, default: Date.now },
   },
-  senderId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  content: { type: String, required: true },
-  type: {
-    type: String,
-    enum: ['text', 'image', 'file', 'audio', 'video'],
-    default: 'text',
-  },
-  mediaUrl: { type: String },
-  fileName: { type: String },
-  fileSize: { type: Number },
-  createdAt: { type: Date, default: Date.now },
-})
+  { timestamps: true },
+)
 
-export const MessageModel = model<IMessage>('Message', messageSchema)
+export const MessageModel = model<IMessage>('Message', MessageSchema)
